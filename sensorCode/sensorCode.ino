@@ -117,7 +117,7 @@ void loop() {
   fullPrint.concat(altitudeString);
   
   Serial.println(fullPrint);
-  delay(5000);
+  delay(30000);
 }
 
 
