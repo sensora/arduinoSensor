@@ -16,6 +16,12 @@
 */
 
 #include <Wire.h>
+#include <Adafruit_GFX.h>
+#include <Adafruit_SSD1306.h>
+#define OLED_RESET 4
+SSD1306 display(OLED_RESET);
+
+int totalSent = 0;
 
 #define BMP085_ADDRESS 0x77  // I2C address of BMP085
 
@@ -51,13 +57,14 @@ dht11 DHT11;
 /*Pin setup*/
 int lightSensor = A0;
 //int soundSensor = A1;
-#define DHT11PIN 15
+#define DHT11PIN A1
 //int vibrationSensor = A3;
 
 void setup() {
   Serial.begin(9600);
   Wire.begin();
   bmp085Calibration();
+  display.begin(SSD1306_SWITCHCAPVCC, 0x3c); 
 }
 
 
@@ -117,9 +124,51 @@ void loop() {
   fullPrint.concat(altitudeString);
   
   Serial.println(fullPrint);
+  
+  display.clearDisplay();
+  display.setTextSize(1);
+  display.setTextColor(WHITE);
+  
+  display.setCursor(0,0);
+  String temperatureDisplay = "Temperature: ";
+  temperatureDisplay.concat(temp);
+  display.println(temperatureDisplay);
+  
+  display.setCursor(0,10);
+  String moistureDisplay = "Moisture: ";
+  moistureDisplay.concat(hum);
+  display.println(moistureDisplay);
+  
+  display.setCursor(0,20);
+  String lightDisplay = "Light: ";
+  lightDisplay.concat(lightValue);
+  display.println(lightDisplay);
+  
+  display.setCursor(0,30);
+  String pressureDisplay = "Pressure: ";
+  pressureDisplay.concat(pressure);
+  display.println(pressureDisplay);
+  
+  display.setCursor(0,40);
+  String temperatureDisplay2 = "Temperature 2: ";
+  temperatureDisplay2 += temperature, DEC;
+  display.println(temperatureDisplay2);
+  
+  display.setCursor(0,50);
+  String altitudeDisplay = "Altitude: ";
+  altitudeDisplay.concat(alt);
+  display.println(altitudeDisplay);
+  
+  totalSent ++;
+  display.setCursor(85, 10);
+   display.setTextSize(2);
+  display.println(totalSent);
+  
+  
+  display.display();
+  
   delay(30000);
 }
-
 
 // Stores all of the bmp085's calibration values into global variables
 // Calibration values are required to calculate temp and pressure
